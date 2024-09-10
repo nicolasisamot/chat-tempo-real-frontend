@@ -1,0 +1,24 @@
+.cardContato {
+  background-color: green;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.cardContato:hover {
+  background-color: blue;
+}
+
+.foto {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.foto img {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+}

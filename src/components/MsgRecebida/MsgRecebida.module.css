@@ -1,0 +1,12 @@
+.msgRecebida {
+  align-self: flex-start;
+  border-radius: 1rem 1rem 1rem 0;
+  background-color: white;
+  width: max-content;
+  max-width: 50%;
+  padding: 1rem;
+}
+
+.texto {
+  font-size: 1.6rem;
+}

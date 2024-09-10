@@ -1,0 +1,9 @@
+.menuConversas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100vh - 6rem);
+  transform: translateY(6rem);
+  width: 30rem;
+  background-color: red;
+}
