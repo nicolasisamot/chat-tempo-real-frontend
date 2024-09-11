@@ -4,6 +4,7 @@ import CampoTextoFormAuth from "../CampoTextoFormAuth/CampoTextoFormAuth";
 import api from "../../api";
 import { AuthContext } from "../../contexts/AuthContext.js";
 import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function LoginForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log({ username, password });
+
     try {
       const response = await api.post(
         "login",
@@ -27,10 +28,11 @@ export default function LoginForm() {
           },
         }
       );
-      console.log(response.data);
+
       login(response.data.token, response.data.user);
       setPassword("");
       setUsername("");
+
       navigate("/chat");
     } catch (error) {
       setPassword("");

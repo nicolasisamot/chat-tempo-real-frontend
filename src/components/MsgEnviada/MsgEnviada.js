@@ -1,11 +1,10 @@
 import styles from "./MsgEnviada.module.css";
 
-export default function MsgEnviada() {
+export default function MsgEnviada(props) {
   return (
     <div className={styles.msgEnviada}>
-      <p className={styles.texto}>
-        Lorem Ipsum is simply dummy text of the printing.
-      </p>
+      <p className={styles.texto}>{props.texto}</p>
+      <span className={styles.data}>{props.data}</span>
     </div>
   );
 }
