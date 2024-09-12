@@ -6,10 +6,16 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { useContext, useEffect } from "react";
 import api from "../../api";
 import { ChatContext } from "../../contexts/ChatContext";
+import {
+  connectSocket,
+  disconnectSocket,
+  joinRoom,
+  leaveRoom,
+} from "../../socket";
 
 export default function MenuConversas() {
   const [loading, setLoading] = useState(true);
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const { chatAtual, setChatAtual, messages, setMessages } =
     useContext(ChatContext);
   const [contatos, setContatos] = useState([]);
@@ -28,9 +34,14 @@ export default function MenuConversas() {
   }
 
   useEffect(() => {
-    if (user) {
+    if (user && token) {
       buscarContatos();
+      connectSocket();
     }
+
+    return () => {
+      disconnectSocket();
+    };
   }, [user]);
 
   const contatosFiltrados =
@@ -58,9 +69,13 @@ export default function MenuConversas() {
                 fotoContato={"https://github.com/nicolasisamot.png"}
                 nomeContato={contato.username}
                 onClick={() => {
+                  if (chatAtual?.conversation_id) {
+                    leaveRoom(chatAtual.conversation_id);
+                  }
                   setMessages([]);
-
+                  joinRoom(contato.conversation_id);
                   setChatAtual({
+                    contact_id: contato.id,
                     conversation_id: contato.conversation_id,
                     username: contato.username,
                   });

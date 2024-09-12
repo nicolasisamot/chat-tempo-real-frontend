@@ -3,15 +3,29 @@ import MsgEnviada from "../MsgEnviada/MsgEnviada";
 import MsgRecebida from "../MsgRecebida/MsgRecebida";
 import Carregando from "../Carregando/Carregando";
 import { AuthContext } from "../../contexts/AuthContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { ChatContext } from "../../contexts/ChatContext";
 import api from "../../api";
 
+import {
+  sendMessage,
+  receiveMessage,
+  offReceiveMessage,
+  leaveRoom,
+} from "../../socket";
+import { socket } from "../../socket";
+
 export default function Conversa({ children }) {
+  console.log("renderizou");
   const [loading, setLoading] = useState(true);
   const { chatAtual, setChatAtual, messages, setMessages } =
     useContext(ChatContext);
   const { user } = useContext(AuthContext);
+  const endOfMessagesRef = useRef(null);
+
+  const scrollToBottom = () => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   async function buscarConversa(conversation_id) {
     try {
@@ -30,12 +44,44 @@ export default function Conversa({ children }) {
     }
   }, [chatAtual]);
 
+  useEffect(() => {
+    const addNovaMsg = (novaMensagem) => {
+      console.log("mensagem nova");
+
+      setMessages((prevMensagens) => [...prevMensagens, novaMensagem]);
+    };
+
+    receiveMessage(addNovaMsg);
+
+    return () => {
+      offReceiveMessage();
+    };
+  }, [chatAtual]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const message = e.target[0].value;
+    e.target[0].value = "";
+    const data = {
+      message: message,
+      recipient_id: chatAtual.contact_id,
+      conversation_id: chatAtual.conversation_id,
+      createdAt: new Date(),
+      //sender_id: user.id, //backend ja verifica inseri quem enviou por meio do token
+    };
+    sendMessage(data);
+  }
+
   return (
-    <div className={styles.conversa}>
-      {loading ? (
-        <Carregando />
-      ) : (
-        <>
+    <>
+      <div className={styles.conversa}>
+        {loading ? (
+          <Carregando />
+        ) : (
           <div className={styles.msgsTeste}>
             {messages.map((msg) => {
               if (msg.sender_id == user.id) {
@@ -57,20 +103,20 @@ export default function Conversa({ children }) {
                 );
               }
             })}
+            <div ref={endOfMessagesRef} />
           </div>
-        </>
-      )}
-
-      <form className={styles.formMensagem}>
-        <input
-          className={styles.campoMensagem}
-          type="text"
-          placeholder="Escreva sua mensagem"
-        />
-        <button className={styles.botao} type="submit">
-          Enviar
-        </button>
-      </form>
-    </div>
+        )}
+        <form onSubmit={handleSubmit} className={styles.formMensagem}>
+          <input
+            className={styles.campoMensagem}
+            type="text"
+            placeholder="Escreva sua mensagem"
+          />
+          <button className={styles.botao} type="submit">
+            Enviar
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

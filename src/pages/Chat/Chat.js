@@ -10,11 +10,6 @@ import { connectSocket, disconnectSocket } from "../../socket";
 export default function Chat(props) {
   const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    connectSocket();
-    return () => disconnectSocket();
-  }, []);
-
   return (
     <>
       <ChatContextProvider>
