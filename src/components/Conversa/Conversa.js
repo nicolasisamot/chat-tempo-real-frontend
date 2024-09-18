@@ -16,15 +16,19 @@ import {
 import { socket } from "../../socket";
 
 export default function Conversa({ children }) {
-  console.log("renderizou");
   const [loading, setLoading] = useState(true);
   const { chatAtual, setChatAtual, messages, setMessages } =
     useContext(ChatContext);
   const { user } = useContext(AuthContext);
-  const endOfMessagesRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      const container = chatContainerRef.current;
+      setTimeout(() => {
+        container.scrollTop = container.scrollHeight;
+      }, 0);
+    }
   };
 
   async function buscarConversa(conversation_id) {
@@ -32,6 +36,9 @@ export default function Conversa({ children }) {
       const response = await api.get(`/messages/${conversation_id}`);
       setMessages(response.data.resultado);
       setLoading(false);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 0);
     } catch (error) {
       alert("Ocorreu um erro ao buscar a conversa:");
     }
@@ -40,15 +47,22 @@ export default function Conversa({ children }) {
   useEffect(() => {
     if (chatAtual) {
       buscarConversa(chatAtual.conversation_id);
-      setLoading(false);
     }
   }, [chatAtual]);
 
   useEffect(() => {
     const addNovaMsg = (novaMensagem) => {
-      console.log("mensagem nova");
-
       setMessages((prevMensagens) => [...prevMensagens, novaMensagem]);
+      const container = chatContainerRef.current;
+      if (container) {
+        const isScrolledToBottom =
+          container.scrollHeight - container.scrollTop ===
+          container.clientHeight;
+
+        if (isScrolledToBottom) {
+          scrollToBottom();
+        }
+      }
     };
 
     receiveMessage(addNovaMsg);
@@ -58,9 +72,7 @@ export default function Conversa({ children }) {
     };
   }, [chatAtual]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  useEffect(() => {}, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -71,7 +83,6 @@ export default function Conversa({ children }) {
       recipient_id: chatAtual.contact_id,
       conversation_id: chatAtual.conversation_id,
       createdAt: new Date(),
-      //sender_id: user.id, //backend ja verifica inseri quem enviou por meio do token
     };
     sendMessage(data);
   }
@@ -82,7 +93,7 @@ export default function Conversa({ children }) {
         {loading ? (
           <Carregando />
         ) : (
-          <div className={styles.msgsTeste}>
+          <div ref={chatContainerRef} className={styles.msgsTeste}>
             {messages.map((msg) => {
               if (msg.sender_id == user.id) {
                 return (
@@ -103,7 +114,6 @@ export default function Conversa({ children }) {
                 );
               }
             })}
-            <div ref={endOfMessagesRef} />
           </div>
         )}
         <form onSubmit={handleSubmit} className={styles.formMensagem}>

@@ -1,20 +1,26 @@
 .cardContato {
-  background-color: green;
+  color: white;
+  background-color: var(--azul);
+  /* width: 95%;
+  height: 8rem; */
+  border-radius: 15px;
   display: flex;
   align-items: center;
-  padding: 0.5rem;
+  padding: 1rem;
   cursor: pointer;
   gap: 1rem;
 }
 
 .cardContato:hover {
-  background-color: blue;
+  color: black;
+  background-color: white;
 }
 
 .foto {
-  display: block;
-  width: 64px;
-  height: 64px;
+  height: 100%;
+}
+.nomeContato {
+  font-size: 150%;
 }
 
 .foto img {

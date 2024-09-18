@@ -12,6 +12,7 @@ import {
   joinRoom,
   leaveRoom,
 } from "../../socket";
+import CampoPesquisa from "../CampoPesquisa/CampoPesquisa";
 
 export default function MenuConversas() {
   const [loading, setLoading] = useState(true);
@@ -54,11 +55,12 @@ export default function MenuConversas() {
   return (
     <>
       <div className={styles.menuConversas}>
-        <input
-          type="text"
-          placeholder="Pesquisar"
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className={styles.containerCampoPesquisa}>
+          <CampoPesquisa
+            placeholder="Pesquisar..."
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
         {loading ? (
           <Carregando />
         ) : (

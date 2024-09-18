@@ -4,8 +4,9 @@
   gap: 1rem;
   overflow-y: scroll;
   padding: 2rem;
-  background-color: coral;
+  background-color: var(--cinza-claro);
   height: 100%;
+  overflow-y: auto; /* ajuste */
 }
 
 .conversa {

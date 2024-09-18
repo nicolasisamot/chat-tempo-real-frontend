@@ -38,13 +38,9 @@ export const sendMessage = (data) => {
 
 export const receiveMessage = (callback) => {
   if (socket) {
-    console.log(socket);
-    console.log("Socket foi inicializado corretamente.");
     socket.on("receiveMessage", (data) => {
       callback(data);
     });
-  } else {
-    console.error("Socket não foi inicializado corretamente.");
   }
 };
 export const offReceiveMessage = () => {

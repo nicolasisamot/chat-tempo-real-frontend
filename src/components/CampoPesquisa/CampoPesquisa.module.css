@@ -1,0 +1,19 @@
+.campoPesquisa {
+  background-image: url("../../../public/search-icon.png");
+  background-repeat: no-repeat;
+  background-position-y: center;
+  background-position-x: 1.2rem;
+  background-size: 1.6rem;
+  padding: 1rem;
+  padding-left: 3.5rem;
+  border-radius: 1.5rem;
+  border: none;
+  width: 90%;
+  margin: 0 auto;
+  font-size: 1.6rem;
+  outline: 1px solid #000000;
+}
+
+.campoPesquisa:focus {
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
