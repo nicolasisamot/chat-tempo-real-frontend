@@ -20,37 +20,61 @@ export default function ModalAdicionarUsuario(props) {
   }
   function handleSubmit(e) {
     e.preventDefault();
-    buscarContatos(e.target[0].value);
-  }
+    const search = e.target[0].value;
 
+    if (search.length > 2) {
+      buscarContatos(search);
+    }
+  }
   return (
     <div className={styles.modalAdicionarUsuario}>
-      <span onClick={() => props.handleModalAdicionar()}> X </span>
+      <img
+        className={styles.close}
+        src={"./close.png"}
+        onClick={() => props.handleModalAdicionar()}
+      ></img>
       <div className={styles.modalContent}>
-        <h1>Adicionar Usuário</h1>
+        <h3 className={styles.titulo}>Adicionar Usuário</h3>
         <div>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="nome">username</label>
+          <form className={styles.form} onSubmit={handleSubmit}>
             <input type="text" name="nome" id="nome" minlength="3" />
             <button type="submit">buscar</button>
           </form>
         </div>
       </div>
-      <>
+      <div className={styles.contatos}>
         {contatos.map((contato) => {
-          return (
-            <div key={contato.id}>
-              <CardContato
-                width="95%"
-                height="8rem"
-                nomeContato={contato.username}
-                fotoContato={"https://github.com/nicolasisamot.png"}
-                isContact={contato.isContact}
-              />
-            </div>
-          );
+          if (contato.isContact == true) {
+            return (
+              <div key={contato.id}>
+                <CardContato
+                  idContato={contato.id}
+                  width="100%"
+                  height="8rem"
+                  adicionar={false}
+                  nomeContato={contato.username}
+                  fotoContato={"https://github.com/nicolasisamot.png"}
+                  isContact={contato.isContact}
+                />
+              </div>
+            );
+          } else {
+            return (
+              <div key={contato.id}>
+                <CardContato
+                  idContato={contato.id}
+                  width="100%"
+                  height="8rem"
+                  adicionar={true}
+                  nomeContato={contato.username}
+                  fotoContato={"https://github.com/nicolasisamot.png"}
+                  isContact={contato.isContact}
+                />
+              </div>
+            );
+          }
         })}
-      </>
+      </div>
     </div>
   );
 }

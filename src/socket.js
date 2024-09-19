@@ -46,10 +46,29 @@ export const receiveMessage = (callback) => {
 export const offReceiveMessage = () => {
   if (socket) {
     socket.off("receiveMessage");
-  } else {
-    console.error("Socket não foi inicializado corretamente.");
   }
 };
+
+export const sendFriendRequest = (data) => {
+  socket.emit("sendFriendRequest", data);
+  console.log("friend request sent");
+};
+
+export const receiveFriendRequest = (callback) => {
+  if (socket) {
+    socket.on("receiveFriendRequest", (data) => {
+      callback(data);
+    });
+  }
+};
+
+export const offReceiveFriendRequest = () => {
+  if (socket) {
+    socket.off("receiveFriendRequest");
+  }
+};
+
+//receiveFriendRequest
 
 // const data = {
 //   message: message,

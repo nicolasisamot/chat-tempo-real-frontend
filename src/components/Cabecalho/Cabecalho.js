@@ -1,16 +1,41 @@
 import styles from "./Cabecalho.module.css";
 import { AuthContext } from "../../contexts/AuthContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalAdicionarUsuario from "../ModalAdicionarUsuario/ModalAdicionarUsuario";
+import ModalSolicitacoes from "../ModalSolicitacoes/ModalSolicitacoes";
+import { offReceiveFriendRequest, receiveFriendRequest } from "../../socket";
 
 export default function Cabecalho({ children }) {
-  const { logout, isAuthenticated } = useContext(AuthContext);
+  const { logout, isAuthenticated, user } = useContext(AuthContext);
   const [isModalAdicionarOpen, setIsModalAdicionarOpen] = useState(false);
+  const [isModalSolicitacoesOpen, setIsModalSolicitacoesOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      receiveFriendRequest((data) => {
+        console.log(data);
+      });
+    }
+
+    return () => {
+      offReceiveFriendRequest();
+    };
+  }, [isAuthenticated]);
+
   const handleModalAdicionar = () => {
+    if (isModalSolicitacoesOpen) {
+      setIsModalSolicitacoesOpen(false);
+    }
     setIsModalAdicionarOpen(!isModalAdicionarOpen);
+  };
+
+  const handleModalSolicitacoes = () => {
+    if (isModalAdicionarOpen) {
+      setIsModalAdicionarOpen(false);
+    }
+    setIsModalSolicitacoesOpen(!isModalSolicitacoesOpen);
   };
 
   return (
@@ -21,6 +46,11 @@ export default function Cabecalho({ children }) {
             {isModalAdicionarOpen && (
               <ModalAdicionarUsuario
                 handleModalAdicionar={handleModalAdicionar}
+              />
+            )}
+            {isModalSolicitacoesOpen && (
+              <ModalSolicitacoes
+                handleModalSolicitacoes={handleModalSolicitacoes}
               />
             )}
             <button
@@ -35,7 +65,18 @@ export default function Cabecalho({ children }) {
         ) : (
           <button onClick={() => navigate("/login")}>Login</button>
         )}
-        <span onClick={handleModalAdicionar}>x</span>
+        <div>
+          <img
+            className={styles.icone}
+            src="./friend-request.png"
+            onClick={handleModalAdicionar}
+          ></img>
+          <img
+            className={styles.icone}
+            src="./envelope.png"
+            onClick={handleModalSolicitacoes}
+          ></img>
+        </div>
       </header>
       {children}
     </>

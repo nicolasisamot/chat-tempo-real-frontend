@@ -70,6 +70,7 @@ export default function MenuConversas() {
                 key={contato.id}
                 fotoContato={"https://github.com/nicolasisamot.png"}
                 nomeContato={contato.username}
+                idContato={"sou o user"} //ADD
                 onClick={() => {
                   if (chatAtual?.conversation_id) {
                     leaveRoom(chatAtual.conversation_id);
