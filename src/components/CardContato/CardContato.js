@@ -33,7 +33,12 @@ export default function CardContato({
 
       <picture className={styles.botao}>
         {isContact && <img src={"./friends.png"}></img>}
-        {adicionar && <img src={"./add-user.png"}></img>}
+        {adicionar && (
+          <img
+            onClick={(e) => handleAddUser(e, idContato)}
+            src={"./add-user.png"}
+          ></img>
+        )}
         {solicitacao && (
           <div className={styles.solicitacao}>
             <img src={"./reject.png"}></img>

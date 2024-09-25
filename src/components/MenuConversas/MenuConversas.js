@@ -37,12 +37,9 @@ export default function MenuConversas() {
   useEffect(() => {
     if (user && token) {
       buscarContatos();
-      connectSocket();
     }
 
-    return () => {
-      disconnectSocket();
-    };
+    return () => {};
   }, [user]);
 
   const contatosFiltrados =

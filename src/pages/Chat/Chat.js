@@ -8,14 +8,10 @@ import ChatContextProvider from "../../contexts/ChatContext";
 import { connectSocket, disconnectSocket } from "../../socket";
 
 export default function Chat(props) {
-  const { user } = useContext(AuthContext);
-
   return (
     <>
-      <ChatContextProvider>
-        <MenuConversas />
-        <Conversa />
-      </ChatContextProvider>
+      <MenuConversas />
+      <Conversa />
     </>
   );
 }

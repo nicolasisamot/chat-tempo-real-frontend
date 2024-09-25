@@ -2,22 +2,30 @@ import { io } from "socket.io-client";
 
 export let socket;
 
-export const connectSocket = () => {
-  const token = localStorage.getItem("authToken");
+export const connectSocket = async () => {
+  const abc = new Promise((resolve, reject) => {
+    const token = localStorage.getItem("authToken");
 
-  socket = io("http://localhost:3001", {
-    auth: {
-      token,
-    },
+    socket = io("http://localhost:3001", {
+      auth: {
+        token,
+      },
+    });
+
+    socket.on("connect", () => {
+      resolve(socket);
+      console.log("Conectado ao servidor");
+    });
+
+    socket.on("connect_error", (error) => {
+      reject(error);
+      console.log("Erro ao conectar ao servidor");
+    });
   });
-
-  socket.on("connect", () => {
-    console.log("Conectado com sucesso ao servidor!");
-  });
-
   socket.on("disconnect", () => {
     console.log("Desconectado do servidor");
   });
+  return abc;
 };
 
 export const disconnectSocket = () => {
@@ -38,6 +46,7 @@ export const sendMessage = (data) => {
 
 export const receiveMessage = (callback) => {
   if (socket) {
+    console.log("recebendo solicitacoes");
     socket.on("receiveMessage", (data) => {
       callback(data);
     });
@@ -56,6 +65,7 @@ export const sendFriendRequest = (data) => {
 
 export const receiveFriendRequest = (callback) => {
   if (socket) {
+    console.log("recebendo solicitacoes");
     socket.on("receiveFriendRequest", (data) => {
       callback(data);
     });
@@ -66,6 +76,10 @@ export const offReceiveFriendRequest = () => {
   if (socket) {
     socket.off("receiveFriendRequest");
   }
+};
+
+export const getSocket = () => {
+  return socket;
 };
 
 //receiveFriendRequest

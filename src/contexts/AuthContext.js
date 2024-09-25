@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
+import { connectSocket, disconnectSocket } from "../socket";
 
 export const AuthContext = createContext();
 AuthContext.displayName = "Auth";
@@ -13,16 +14,16 @@ export default function AuthContextProvider({ children }) {
   const login = (token, user) => {
     setToken(token);
     setUser(user);
-    setIsAuthenticated(true);
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     localStorage.setItem("authToken", `Bearer ${token}`);
+    setIsAuthenticated(true);
   };
   const logout = () => {
     setUser(null);
     setToken(null);
-    setIsAuthenticated(false);
     api.defaults.headers.common["Authorization"] = null;
     localStorage.removeItem("authToken");
+    setIsAuthenticated(false);
   };
 
   useEffect(() => {
@@ -32,7 +33,13 @@ export default function AuthContextProvider({ children }) {
       setUser(decodedToken.user);
       setToken(savedToken);
       api.defaults.headers.common["Authorization"] = savedToken;
-      setIsAuthenticated(true);
+      let conexao = connectSocket()
+        .then((socket) => {
+          setIsAuthenticated(true);
+        })
+        .catch((error) => {
+          setIsAuthenticated(false);
+        });
     }
   }, []);
   return (

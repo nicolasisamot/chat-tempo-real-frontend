@@ -1,12 +1,19 @@
 import styles from "./Cabecalho.module.css";
 import { AuthContext } from "../../contexts/AuthContext";
+import { ChatContext } from "../../contexts/ChatContext";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ModalAdicionarUsuario from "../ModalAdicionarUsuario/ModalAdicionarUsuario";
 import ModalSolicitacoes from "../ModalSolicitacoes/ModalSolicitacoes";
-import { offReceiveFriendRequest, receiveFriendRequest } from "../../socket";
+import {
+  getSocket,
+  offReceiveFriendRequest,
+  receiveFriendRequest,
+} from "../../socket";
 
 export default function Cabecalho({ children }) {
+  const { solicitacoesPendentes, setSolicitacoesPendentes } =
+    useContext(ChatContext);
   const { logout, isAuthenticated, user } = useContext(AuthContext);
   const [isModalAdicionarOpen, setIsModalAdicionarOpen] = useState(false);
   const [isModalSolicitacoesOpen, setIsModalSolicitacoesOpen] = useState(false);
@@ -15,7 +22,10 @@ export default function Cabecalho({ children }) {
   useEffect(() => {
     if (isAuthenticated) {
       receiveFriendRequest((data) => {
-        console.log(data);
+        setSolicitacoesPendentes((prevSolicitacoesPendentes) => [
+          ...prevSolicitacoesPendentes,
+          data,
+        ]);
       });
     }
 
